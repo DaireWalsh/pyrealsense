@@ -50,8 +50,10 @@ while True:
     cv2.imwrite("ir/"+count+".png",ir)
 
     cv2.imshow('', ir)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+
+    k = cv2.waitKey(0)
+    if k == 27:         # wait for ESC key to exit
         break
-    if cv2.waitKey(1) & 0xFF == ord('e'):
+    elif k == ord('e'): # wait for 's' key to save and exit
         exposure = input("Enter Exposure")
         dev.set_device_option(30, float(exposure))
