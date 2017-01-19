@@ -76,3 +76,15 @@ class DACStream(Stream):
         self.shape = (height, width)
         self.dtype = ctypes.c_uint16
 
+
+class IRStream(Stream):
+    def __init__(self, name='ir',
+                       native=True,
+                       stream=rs_stream.RS_STREAM_INFRARED,
+                       width=640,
+                       height=480,
+                       format=rs_format.RS_FORMAT_Y8,
+                       fps=30):
+        super(IRStream, self).__init__(name, native, stream, width, height, format, fps)
+        self.shape = (height, width, 1)
+        self.dtype = ctypes.c_uint8

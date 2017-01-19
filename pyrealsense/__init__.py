@@ -9,7 +9,7 @@ from numpy.ctypeslib import ndpointer
 import ctypes
 
 from .constants import RS_API_VERSION, rs_stream, rs_format
-from .stream import ColourStream, DepthStream, PointStream, CADStream
+from .stream import ColourStream, DepthStream, PointStream, CADStream, IRStream
 from .to_wrap import rs_error, rs_intrinsics, rs_context, rs_device
 from .utils import pp, _check_error
 from .importlib import rsutilwrapper, lrs
@@ -47,7 +47,7 @@ def stop():
 
 def Device(
     device_id = 0,
-    streams = [ColourStream(), DepthStream(), PointStream(), CADStream()],
+    streams = [ColourStream(), DepthStream(), PointStream(), CADStream(), IRStream()],
     depth_control_preset = None,
     ivcam_preset = None):
     """Camera device."""
@@ -69,7 +69,9 @@ def Device(
     logger.info("    Firmware version: {}".format(version))
 
     ## create a new class for the device
-    class_name = name.split(" ")[-1] + "-" + serial
+
+    # str(name).split(" ")[-1]
+    class_name = str(name).split(" ")[-1] + "-" + str(serial)
     NewDevice = type(class_name, (DeviceBase,), dict())
 
     nd = NewDevice(dev, name, serial, version, streams)
@@ -137,7 +139,7 @@ class DeviceBase(object):
 
     def get_device_option_description(self, option):
         """Get the device option description."""
-        return pp(lrs.rs_get_device_option_description, 
+        return pp(lrs.rs_get_device_option_description,
             self.dev, ctypes.c_uint(option), ctypes.byref(e))
 
     def set_device_option(self, option, value):
@@ -178,4 +180,3 @@ class DeviceBase(object):
             ctypes.c_void_p(depth.ctypes.data),
             ctypes.byref(self.depth_intrinsics),
             ctypes.byref(ctypes.c_float(self.depth_scale)))
-
